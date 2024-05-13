@@ -102,6 +102,9 @@ export default function Lab1() {
       Please
       <a href="https://www.lipsum.com"> click here </a>
       to get dummy text<br />
+
+      <h4><b>Github Repository</b></h4>
+      Please <a href="https://github.com/iris19951229/kanbas-react-web-app/tree/main" id="wd-github">click here</a> to access my Github
     </div>
   );
 }
