@@ -16,6 +16,7 @@ export default function AssignmentEditor() {
             </textarea>
             <br />
             <table>
+                <table>
                 <tr>
                     <td align="right" valign="top">
                         <label htmlFor="wd-points">Points</label>
@@ -40,12 +41,15 @@ export default function AssignmentEditor() {
                         </select>
                     </td>
                 </tr><br></br>
+            </table>
+            <table>
                 <tr>
                     <td>
                         <label htmlFor="wd-submission-type">Submission Type</label>
                             <select id="wd-submission-type">
                                 <option value="Online">Online</option>
                             </select><br></br>
+                            <br></br>
                         <div>
                             <label>Online Entry Options</label>
                         </div>
@@ -71,6 +75,8 @@ export default function AssignmentEditor() {
                         </div>
                     </td>
                 </tr>
+                </table>
+                <table>
                 <tr>
                     <td>
                         <label htmlFor="wd-assign-to">Assign Assign to</label>
@@ -103,13 +109,15 @@ export default function AssignmentEditor() {
                     <td>
                         <input type="date" id="wd-available-from" value="2024-05-06" />
                         <input type="date" id="wd-available-until" value="2024-05-20" />
-                        </td>
+                    </td>
                 </tr>
                 <tr>
-                    <td align="right" valign="top">
+                    <td align="right" valign="top" colSpan={2}>
+                        <hr />
                       <button>Cancel</button> <button>Save</button>
                     </td>
                 </tr>
+                </table>
             </table>
         </div>
     );
