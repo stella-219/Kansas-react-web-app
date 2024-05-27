@@ -3,7 +3,14 @@ import { LiaFileImportSolid } from "react-icons/lia";
 import { IoIosArrowDown, IoIosSettings } from "react-icons/io";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { CiFilter } from "react-icons/ci";
+import * as db from "../../Database";
+import { useParams } from "react-router";
 export default function Grades() {
+  const { cid } = useParams();
+  const currentEnrollments = db.enrollments.filter(enrollment => enrollment.course === cid);
+  const studentIds = currentEnrollments.map(enrollment => enrollment.user);
+  const students = db.users.filter(user => studentIds.includes(user._id));
+  const courseAssignments = db.assignments.filter(assignment => assignment.course === cid);
   return (
     <div>
       <div className="d-flex justify-content-end mt-3">
@@ -74,89 +81,36 @@ export default function Grades() {
       </div>
       <br />
       <div className="table-responsive">
-        <table className="table table-striped table-bordered">
-          <thead>
-            <tr className="table-light">
-              <th>Student Name</th>
-              <th>
-                A1 SETUP
+      <table className="table table-striped table-bordered">
+        <thead>
+          <tr className="table-light">
+            <th>Student Name</th>
+            {courseAssignments.map(assignment => (
+              <th key={assignment._id}>
+                {assignment.title}
                 <br />
                 Out of 100
               </th>
-              <th>
-                A2 HTML
-                <br />
-                Out of 100
-              </th>
-              <th>
-                A3 CSS
-                <br />
-                Out of 100
-              </th>
-              <th>
-                A4 BOOTSTRAP
-                <br />
-                Out of 100
-              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {students.map(student => (
+            <tr key={student._id}>
+              <td className="text-danger">{student.firstName} {student.lastName}</td>
+              {courseAssignments.map(assignment => {
+                const grade = db.grades.find(g => g.student === student._id && g.assignment === assignment._id);
+                return (
+                  <td key={assignment._id}>
+                    {grade ? `${grade.grade}` : 'N/A'}
+                  </td>
+                );
+              })}
             </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="text-danger">Jane Adams</td>
-              <td>100%</td>
-              <td>96.67%</td>
-              <td>92.18%</td>
-              <td>66.22%</td>
-            </tr>
-            <tr>
-              <td className="text-danger">Christina Allen</td>
-              <td>100%</td>
-              <td>100%</td>
-              <td>100%</td>
-              <td>100%</td>
-            </tr>
-            <tr>
-              <td className="text-danger">Samreen Ansari</td>
-              <td>100%</td>
-              <td>100%</td>
-              <td>100%</td>
-              <td>100%</td>
-            </tr>
-            <tr>
-              <td className="text-danger">Han Bao</td>
-              <td>100%</td>
-              <td>100%</td>
-              <td>
-                    <div className="input-group">
-                        <input
-                        type="text"
-                        className="form-control"
-                        defaultValue="88.03%"
-                         />
-                        <span className="input-group-text">
-                            <TbFileImport />
-                        </span>
-                    </div>
-                </td>
-              <td>98.99%</td>
-            </tr>
-            <tr>
-              <td className="text-danger">Mahi Sai Srinivas Bobbili</td>
-              <td>100%</td>
-              <td>96.67%</td>
-              <td>98.37%</td>
-              <td>100%</td>
-            </tr>
-            <tr>
-              <td className="text-danger">Siran Cao</td>
-              <td>100%</td>
-              <td>100%</td>
-              <td>100%</td>
-              <td>100%</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
+  </div>
   );
 }
