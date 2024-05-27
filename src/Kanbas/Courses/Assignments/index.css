@@ -55,4 +55,16 @@
   .ms-auto {
     margin-left: auto;
   }
+  wd-dashboard-course {
+    width: 300px;
+  }
+  
+  .wd-dashboard-course .card {
+    width: 100%;
+  }
+  
+  .wd-dashboard-course .card-img-top {
+    height: 160px;
+    object-fit: cover;
+  }
   
