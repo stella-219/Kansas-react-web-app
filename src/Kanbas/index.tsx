@@ -20,7 +20,7 @@ export default function Kanbas() {
     _id: "1234",
     name: "New Course",
     number: "New Number",
-    image: "NEU.png",
+    image: "/images/reactjs.jpg",
     startDate: "2023-09-10",
     endDate: "2023-12-15",
     description: "New Description",
