@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
+const REMOTE_SERVER = 'http://localhost:4000';
 export default function QueryParameters() {
   const [a, setA] = useState("34");
   const [b, setB] = useState("23");

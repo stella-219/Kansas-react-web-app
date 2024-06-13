@@ -20,4 +20,21 @@ html {
   .border-gray {
     border: 1px solid gray;
   }
-    
+  .box{
+    border: 1px solid gray;
+    padding: 15px;
+    margin: 5px;
+    width: 50%;
+    align-items: center;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+
+  }
+  .choice{
+    margin: 15px;
+  }
+  .form-check-label{
+    margin-top: 10px;
+  }
+button{
+  margin: 10px;
+}

@@ -1,37 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams, } from "react-router";
+import {  useNavigate, useParams, } from "react-router";
 import Editor from 'react-simple-wysiwyg'
-import { quizzes, questions } from "../../Database";
+import { quizzes } from "../../Database";
 import { editQuestion} from "./reducer";
+import '../../styles.css';
+// interface Question {
+//     _id: string;
+//     title: string;
+//     type: string;
+//     question: string;
+//     options: string[];
+//     answer: string;
+//     points: number;
+// }
 
-interface Question {
-    _id: string;
-    title: string;
-    type: string;
-    question: string;
-    options: string[];
-    answer: string;
-    points: number;
-}
-
-interface State {
-    questionReducer: {
-        questions: Question[];
-    };
-}
+// interface State {
+//     questionReducer: {
+//         questions: Question[];
+//     };
+// }
 
 export default function Edit() {
-    const { pathname } = useLocation();
-    const course = pathname.split("/")[3];
-    const assignmentId = pathname.split("/")[5];
+    // const { pathname } = useLocation();
+    // const course = pathname.split("/")[3];
+    // const assignmentId = pathname.split("/")[5];
     const { cid, qid } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const quiz = quizzes.find((quiz) => quiz._id === qid);
     const questions = useSelector((state: any) => state.questionReducer ? state.questionReducer.questions : []);
-    const quizQuestions = quiz ? questions.filter((question: any) => quiz.questions.includes(question._id)) : [];
-
+    const quizQuestions = useMemo(() => {
+        return quiz ? questions.filter((question: any) => quiz.questions.includes(question._id)) : [];
+    }, [quiz, questions]);
     const [currQuestion, setCurrQuestion] = useState<any>(null);
     const [choices, setChoices] = useState<string[]>([]);
     const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
@@ -62,6 +63,7 @@ export default function Edit() {
 
     const handleQuestionSave = () => {
         const updatedQuestion = { ...currQuestion, options: choices };
+        console.log(updatedQuestion);
         dispatch(editQuestion(updatedQuestion));
         navigate(`/Kanbas/Courses/${cid}/Quizzes/edit/${qid}`);
     };
@@ -74,46 +76,53 @@ export default function Edit() {
 
     return (
         <>
-            <select id="questionSelector" className="form-control" onChange={(e) => setSelectedQuestionId(e.target.value)}>
-                <option value="">Select a question</option>
-                {quizQuestions.map((question: any) => (
-                    <option key={question._id} value={question._id}>{question.title}</option>
-                ))}
+
+<div className="box">
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+        <select id="questionSelector" className="form-control" onChange={(e) => setSelectedQuestionId(e.target.value)}>
+            <option value="Select a question">Select a question</option>
+            {quizQuestions.map((question: any) => (
+                <option key={question._id} value={question._id}>{question.title}</option>
+            ))}
+        </select>
+
+        {currQuestion && (
+            <select id="questionType" className="form-control" value={currQuestion.type} onChange={(e) => handleOnChangeSelectedType(e.target.value)}>
+                <option value="Multiple Choice">Multiple Choice</option>
+                <option value="True/False">True/False</option>
+                <option value="Fill in the Blanks">Fill in the Blanks</option>
             </select>
-            <br />
+        )}
+    </div>
 
-            {currQuestion && (
-                <>
-                    <select id="questionType" className="form-control" value={currQuestion.type} onChange={(e) => handleOnChangeSelectedType(e.target.value)}>
-                        <option value="Multiple Choice">Multiple Choice</option>
-                        <option value="True/False">True/False</option>
-                        <option value="Fill in the Blanks">Fill in the Blanks</option>
-                    </select>
-                    <br />
-
-                    {currQuestion.type === 'Multiple Choice' && (
-                        <MultipleChoiceEditor
-                            currQuestion={currQuestion}
-                            setCurrQuestion={setCurrQuestion}
-                            choices={choices}
-                            handleChoicesChange={handleChoicesChange}
-                            handleCorrectAnswerChange={handleCorrectAnswerChange}
-                        />
-                    )}
-
-                    {currQuestion.type === 'True/False' && (
-                        <TrueFalseEditor currQuestion={currQuestion} setCurrQuestion={setCurrQuestion} />
-                    )}
-
-                    {currQuestion.type === 'Fill in the Blanks' && (
-                        <FillInBlanksEditor currQuestion={currQuestion} setCurrQuestion={setCurrQuestion} />
-                    )}
-                </>
+    {currQuestion && (
+        <>
+            {currQuestion.type === 'Multiple Choice' && (
+                <MultipleChoiceEditor
+                    currQuestion={currQuestion}
+                    setCurrQuestion={setCurrQuestion}
+                    choices={choices}
+                    handleChoicesChange={handleChoicesChange}
+                    handleCorrectAnswerChange={handleCorrectAnswerChange}
+                />
             )}
 
-            <br />
+            {currQuestion.type === 'True/False' && (
+                <TrueFalseEditor currQuestion={currQuestion} setCurrQuestion={setCurrQuestion} />
+            )}
+
+            {currQuestion.type === 'Fill in the Blanks' && (
+                <FillInBlanksEditor currQuestion={currQuestion} setCurrQuestion={setCurrQuestion} />
+            )}
+        </>
+    )}
+
+<br />
+        
             <button className="btn btn-secondary" onClick={handleQuestionCancel}>Cancel</button>
             <button className="btn btn-danger" onClick={handleQuestionSave}>Save</button>
+</div>
+
         </>
     );
 }
@@ -140,7 +149,7 @@ const MultipleChoiceEditor: React.FC<MultipleChoiceEditorProps> = ({ currQuestio
         <b>Choices:</b>
         <br />
         {choices.map((choice, index) => (
-            <div key={index}>
+            <div className="choice" key={index}>
                 <input type="text" id={`option${index + 1}`} value={choice} className="form-control" onChange={(e) => handleChoicesChange(index, e)} />
                 <input type="radio" id={`MC${index + 1}`} name="MC" checked={currQuestion.answer === choice} onChange={() => handleCorrectAnswerChange(choice)} />
                 <label className="form-check-label" htmlFor={`MC${index + 1}`}>Is Correct</label>
