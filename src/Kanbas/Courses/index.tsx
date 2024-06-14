@@ -8,6 +8,7 @@ import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa6";
 import Quizzes from "./Quizzes";
 import Edit from "./Quizzes/Edit";
+import QuestionList from "./Quizzes/QuestionList";
 
 
 export default function Courses({ courses }: { courses: any[] }) {
@@ -34,7 +35,8 @@ export default function Courses({ courses }: { courses: any[] }) {
             <Route path="Assignments/:id" element={<AssignmentEditor />} />
             <Route path="Grades" element={<Grades />} />
             <Route path="Quizzes" element={<Quizzes />} />
-            <Route path="Quizzes/:qid/edit" element={<Edit />} />
+            <Route path="Quizzes/:qid" element={<Edit />} />
+            <Route path="Quizzes/:qid/edit" element={<QuestionList />} />
             </Routes>
         </div>
       </div>
