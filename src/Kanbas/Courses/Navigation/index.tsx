@@ -5,7 +5,7 @@ export default function CoursesNavigation() {
   const { cid } = useParams();
   const location = useLocation();
   
-  const links = ["Home", "Modules", "Piazza", "Zoom", "Assignments", "Quizzes", "Grades"];
+  const links = ["Home", "Modules", "Piazza", "Zoom", "Assignments", "Quizzes", "Grades", "People"];
 
   return (
     <div id="wd-courses-navigation" className="list-group rounded-0">

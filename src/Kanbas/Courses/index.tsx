@@ -9,6 +9,7 @@ import { FaAlignJustify } from "react-icons/fa6";
 import Quizzes from "./Quizzes";
 import Edit from "./Quizzes/Edit";
 import QuestionList from "./Quizzes/QuestionList";
+import PeopleTable from "./People/Table";
 
 
 export default function Courses({ courses }: { courses: any[] }) {
@@ -37,6 +38,8 @@ export default function Courses({ courses }: { courses: any[] }) {
             <Route path="Quizzes" element={<Quizzes />} />
             <Route path="Quizzes/:qid" element={<Edit />} />
             <Route path="Quizzes/:qid/edit" element={<QuestionList />} />
+            <Route path="People" element={<PeopleTable />} />
+            <Route path="People/:uid" element={<PeopleTable />} />
             </Routes>
         </div>
       </div>
