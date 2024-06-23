@@ -1,40 +1,32 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { questions } from "../../Database";
-console.log(questions);
 
 const initialState = {
-    questions: questions,
+    questions: [] as any [],
 };
 
 const questionSlice = createSlice({
     name: "questions",
     initialState,
     reducers: {
-        addQuestion: (state, { payload: question }) => {
-            const newQuestion = {
-                _id: question._id,
-                title: question.title,
-                type: question.type,
-                question: question.question,
-                options: question.options,
-                answer: question.answer,
-                points: question.points,
-            };
-            state.questions = [...state.questions, newQuestion] as any;
+        setQuestion: (state, action) => {
+            state.questions = action.payload;
         },
-
+        addQuestion: (state, { payload: question }) => {
+            state.questions = [...state.questions, question];
+        },
         deleteQuestion: (state, { payload: qsid }) => {
             state.questions = state.questions.filter((a) => a._id !== qsid);
         },
-
         editQuestion: (state, { payload: updatedQuestion }) => {
             state.questions = state.questions.map((a) =>
-                a._id === updatedQuestion._id ? { ...a, ...updatedQuestion } : a
+                a._id === updatedQuestion._id ? updatedQuestion : a
             );
         },
     },
 });
 
-export const { addQuestion, deleteQuestion, editQuestion } = questionSlice.actions;
+export const { setQuestion, addQuestion, deleteQuestion, editQuestion } = questionSlice.actions;
 export default questionSlice.reducer;
+
+
 

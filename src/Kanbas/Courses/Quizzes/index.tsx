@@ -1,70 +1,91 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
 import { BsGripVertical } from 'react-icons/bs';
-import {Link } from 'react-router-dom';
-import { AiFillCaretDown, AiOutlinePlus } from 'react-icons/ai';
-import { useParams } from 'react-router';
-import { HiOutlineMagnifyingGlass } from 'react-icons/hi2';
-import { FaRocket } from 'react-icons/fa6';
-import { IoIosCreate } from 'react-icons/io';
-import { FaTrash} from 'react-icons/fa';
-import { quizzes } from "../../Database";
+import { MdEdit } from "react-icons/md";
+import * as client from './client';
+import { setQuestion, addQuestion, deleteQuestion, editQuestion } from './reducer';
+import "./style.css";
 
-export default function Quizzes() {
-    const {cid,qid} = useParams();
-    const courseQuizzes = quizzes.filter((quiz: any) => quiz.course === cid);
+export default function Quzzies() {
+    const navigate = useNavigate();
+    const { cid, qid } = useParams();
+    const dispatch = useDispatch();
+    const questions = useSelector((state: any) => state.questionReducer ? state.questionReducer.questions : []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const fetchedQuestions = await client.fetchQuizQuestions(qid);
+                console.log('Fetched Questions:', fetchedQuestions);
+                console.log(questions);
+                dispatch(setQuestion(fetchedQuestions));
+            } catch (error) {
+                console.error('Error fetching quiz questions:', error);
+            }
+        };
+
+        fetchData();
+    }, [dispatch, qid]);
+
+    const handleEditQuestion = (questionId: string) => {
+        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/edit/${questionId}`);
+    };
+
+    const handleDeleteQuestion = async (questionId: string) => {
+        try {
+            await client.deleteQuizQuestionsByQuestionID(questionId);
+            dispatch(deleteQuestion(questionId));
+        } catch (error) {
+            console.error('Error deleting quiz question:', error);
+        }
+    };
 
     return (
-        <div>
-            <div id="wd-quizzes" className="d-flex align-items-center justify-content-between mb-3">
-                <div className="input-group w-50">
-                    <span className="input-group-text bg-white border-end-0">
-                        <HiOutlineMagnifyingGlass />
-                    </span>
-                    <input
-                        type="text"
-                        className="form-control border-start-0"
-                        id="wd-search-quiz"
-                        placeholder="Search for Quiz..."
-                    />
+        <div id="wd-question-editor" className="p-4">
+          <div>
+            {questions.length === 0 ? (
+              <p>No questions available.</p>
+            ) : (
+              questions.map((question: any) => (
+                <div key={question._id} className="question-container mb-4 border rounded shadow-sm">
+                  <div className="d-flex justify-content-between align-items-center p-2 bg-light border-bottom">
+                    <div className="d-flex align-items-center">
+                      <BsGripVertical className="me-3" style={{ fontSize: '1.2rem' }} />
+                      <h6 className="question-title mb-0">{question.title}</h6>
+                    </div>
+                    <span className="text-muted me-1 points-text" style={{ fontSize: '0.9rem' }}><b>{question.points} pts</b></span>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center p-2">
+                    <div className="question-text mb-0 p-2" dangerouslySetInnerHTML={{ __html: question.question }}></div>
+                    <div className="question-actions">
+                      <MdEdit className="text-black me-2" style={{ cursor: 'pointer' }} onClick={() => handleEditQuestion(question._id)} />
+                      <MdCancel className="text-black" style={{ cursor: 'pointer' }} onClick={() => handleDeleteQuestion(question._id)} />
+                    </div>
+                  </div>
                 </div>
-                <div style={{ marginLeft: '15px' }}>
-                    <button id="wd-add-quiz-btn" className="btn btn-md btn-danger mt-4 float-end">
-                        + Quiz
-                    </button>
-                </div>
-            </div> 
-
-            <div id="wd-quizzes-list">
-                <ul id="wd-quizzes-list" className="list-group rounded-0">
-                    <li className="wd-quiz-list list-group-item p-0 mb-5 fs-5 border-gray" style={{ borderLeft: '5px solid green' }}>
-                        <div className="wd-quiz-title p-3 ps-2 bg-secondary">
-                            <AiFillCaretDown /> Assignment Quizzes
-                        </div>
-                        <ul className="wd-quiz-list-items list-group rounded-0">
-                            {courseQuizzes.map(quiz => (
-                                <li key = {quiz._id} className="wd-quiz-list-item list-group-item p-3 ps-1 d-flex align-items-center">
-                                    <Link to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`} className="d-flex align-items-center flex-grow-1 text-decoration-none">
-                                        <FaRocket className="ms-2 fs-3 text-success" />
-                                        <div className="flex-grow-1 me-5">
-                                            <div className="p-1 ps-3">
-                                                <span className="wd-quiz-link">{quiz.title}</span>
-                                                <p className="text-wrap fs-6 mt-1 text-dark">
-                                                    <span className="wd-15 fw-bold">Closed  &nbsp; &nbsp;Due</span> &nbsp;
-                                                    <span>{quiz.due_date} </span> &nbsp;&nbsp;
-                                                    <span>{quiz.points} pts</span> &nbsp;&nbsp;
-                                                    <span>{quiz.questions} Questions</span> 
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <IoIosCreate className="fs-4 text-success ms-2" />
-                                        <FaTrash className="fs-4 text-danger ms-2" />
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+              ))
+            )}
+          </div>
+          <div className="d-flex justify-content-center mb-4">
+            <button id="question-button" className="btn btn btn-light border mt-4 mb-2"
+              onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/edit/NewQuestion`)}>
+              New Question
+            </button>
+          </div>
+          <hr />
+          <div className="d-flex justify-content-start mb-4">
+            <Link to={`/Kanbas/Courses/${cid}/Quizzes`}>
+              <button type="button" className="btn btn-light border me-2 ms-5">
+                Cancel
+              </button>
+            </Link>
+            <button type="submit" className="btn btn-danger">
+              Save
+            </button>
+          </div>
         </div>
-    );
-}
+      );
+    }
