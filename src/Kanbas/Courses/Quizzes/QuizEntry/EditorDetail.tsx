@@ -13,7 +13,8 @@ import Editor from "react-simple-wysiwyg";
 export default function EditorDetail() {
   const { pathname } = useLocation();
   const { cid } = useParams<{ cid: string }>();
-  const qid = pathname.split("/")[5];
+  // const qid = pathname.split("/")[5];
+  const {qid} = useParams();
   const isEdit = pathname.includes("edit");
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function EditorDetail() {
   // Retrieving details for a quiz
   const fetchQuizDetails = async () => {
     try {
-      const details = await client.findQuizDetails(cid as string, qid);
+      const details = await client.findQuizDetails(cid as string, qid as string);
       dispatch(setQuizDetails(details));
     } catch (error) {
       console.error("Failed to fetch quiz details:", error);
@@ -141,9 +142,11 @@ export default function EditorDetail() {
     if (isEdit) {
       await client.updateQuiz(quiz);
       dispatch(editQuiz(quiz));
+      navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}`);
     } else {
       const newQuiz = await client.createQuiz(cid as string, quiz);
       dispatch(addQuiz(newQuiz));
+      navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuiz._id}`);
     }
   };
 
@@ -173,7 +176,6 @@ export default function EditorDetail() {
       onSubmit={(e) => {
         e.preventDefault();
         handleSavaQuiz();
-        navigate(`/Kanbas/Courses/${cid}/Quizzes`);
       }}
     >
       <div id="wd-quiz-editor" className="p-4">
