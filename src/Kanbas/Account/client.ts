@@ -19,4 +19,10 @@ export const signout = async () => {
   return response.data;
 };
   
+// update user information
+export const updateUser = async (user: any) => {
+  const response = await axiosWithCredentials.put(`${USERS_API}/${user._id}`, user);
+  console.log(response);
+  return response.data;
+};
   
