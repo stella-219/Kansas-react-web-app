@@ -1,16 +1,31 @@
 import { GiPencil } from "react-icons/gi";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams, useNavigate} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { findQuizDetails } from "./client";
 import { useEffect, useState } from "react";
 import { setQuizDetails } from './reducer';
 import * as acountClient from "../../../Account/client";
+import { findRecordByUserByQuiz } from "../QuizPage/client";
+
+interface Quiz {
+    _id: string;
+    title: string;
+    due_date: string;
+    points: number;
+    questions: Array<any>;
+    how_many_attempts: number;
+}
 
 export default function Detail() {
     const { pathname } = useLocation();
+    const navigate = useNavigate();
+    const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
     const { cid } = useParams();
     const qid = pathname.split("/")[5];
     const dispatch = useDispatch();
+    const [showAlert, setShowAlert] = useState<boolean>(false);
+    const [alertQuizID, setAlertQuizID] = useState<string>('');
+    const [courseQuizzes, setCourseQuizzes] = useState<Quiz[]>([]);
 
     // Retrieving details for a quiz
     const fetchQuizDetails = async () => {
@@ -55,15 +70,33 @@ export default function Detail() {
             : '';
     }
 
+    const checkUserAttempt = async (quiz: Quiz) => {
+        try {
+            const recordData = await findRecordByUserByQuiz(currentUser._id, quiz._id);
+            console.log("recordData",recordData);
+            if (recordData && recordData.attempt >= quiz.how_many_attempts) {
+                setAlertQuizID(quiz._id);
+                setShowAlert(true);
+            } else {
+                navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/takequiz`);
+            }
+        } catch (error) {
+            console.error('Failed to check user attempts', error);
+            navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/takequiz`);
+        }
+    };
+
     return (
         <div id="detail-container">
             {userRole === "FACULTY" && (
                 <div>
                     <div className="d-flex justify-content-center mb-3">
                         <div className="text-nowrap">
-                            <button id="preview-button" className="btn btn-lg btn-light border me-1" >
-                                Preview
-                            </button>
+                            <Link id="quiz-preview" to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/takequiz`}>
+                                <button id="preview-button" className="btn btn-lg btn-light border me-1" >
+                                    Preview
+                                </button>
+                            </Link>
                             <Link id="quiz-edit" to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/editdetail`}>
                                 <button id="edit-button" className="btn btn-lg btn-light border me-1">
                                     <GiPencil className="position-relative me-1 mb-1" />
@@ -200,10 +233,14 @@ export default function Detail() {
 
                     <div className="d-flex justify-content-center mt-5 mb-5">
                         {/* <Link id="quiz-edit" to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/editdetail`}> */}
-                        <button id="edit-button" className="btn btn-lg btn-danger border me-1 mt-3">
-                            Take the Quiz
-                        </button>
+                        <Link id="quiz-preview" to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/takequiz`}>
+                            <button id="edit-button" className="btn btn-lg btn-danger border me-1 mt-3"
+                                onClick={() => checkUserAttempt(currQuiz)}>
+                                Take the Quiz
+                            </button>
+                        </Link>
                         {/* </Link> */}
+
                     </div>
 
                     {/* add: 
@@ -227,6 +264,35 @@ export default function Detail() {
                     </table>
 
                 </div>)}
+                {showAlert && (
+                <div className="modal fade show" style={{ display: 'block' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Quiz Attempt Limit Reached</h5>
+                                <button type="button" className="close" onClick={() => setShowAlert(false)}>
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <p>You have reached the maximum number of attempts for this quiz.</p>
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => {
+                                        setShowAlert(false);
+                                        navigate(`/Kanbas/Courses/${cid}/Quizzes/${alertQuizID}/Answers/${currentUser._id}`);
+                                    }}
+                                >
+                                    OK
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

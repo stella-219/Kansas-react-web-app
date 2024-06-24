@@ -26,14 +26,14 @@ export default function Dashboard({
     enrolledCourses: any[];
 }) {
     // fetch all the published courses
-    // const [publishedCourses, setPublishedCourses] = useState<any[]>([]);
-    // const fetchPublishedCourses = async () => {
-    //     const courses = await client.fetchPublishedCourses();
-    //     setPublishedCourses(courses);
-    // };
+    const [publishedCourses, setPublishedCourses] = useState<any[]>([]);
+    const fetchPublishedCourses = async () => {
+        const courses = await client.fetchPublishedCourses();
+        setPublishedCourses(courses);
+    };
 
     useEffect(() => {
-        // fetchPublishedCourses();
+        fetchPublishedCourses();
         fetchUserRole();
     }, []);
 
@@ -65,7 +65,7 @@ export default function Dashboard({
                             id="wd-add-new-course-click"
                             onClick={async () => {
                                 await addNewCourse();
-                                // await fetchPublishedCourses();
+                                await fetchPublishedCourses();
                             }}>
                             Add
                         </button>
@@ -74,7 +74,7 @@ export default function Dashboard({
                             id="wd-update-course-click"
                             onClick={async () => {
                                 await updateCourse();
-                                // await fetchPublishedCourses();
+                                await fetchPublishedCourses();
                             }}>
                             Update
                         </button>
@@ -91,7 +91,7 @@ export default function Dashboard({
 
 
 
-            {/* {(userRole === "USER" || userRole === "FACULTY") && (
+            {(userRole === "USER" || userRole === "FACULTY") && (
                 <div>
                     <h2 id="wd-dashboard-published">My Courses ({publishedCourses.length})</h2> <hr />
                     <div id="wd-dashboard-courses" className="row">
@@ -120,7 +120,7 @@ export default function Dashboard({
                                                     <button onClick={async (event) => {
                                                         event.preventDefault();
                                                         await deleteCourse(course._id);
-                                                        // await fetchPublishedCourses();
+                                                        await fetchPublishedCourses();
                                                     }} className="btn btn-danger float-end"
                                                         id="wd-delete-course-click">
                                                         Delete
@@ -146,7 +146,7 @@ export default function Dashboard({
                     <br />
                     <br />
                 </div>
-            )} */}
+            )}
 
             <button onClick={handleViewAllCourses} className="btn btn-warning btn-warning float-end">
                 View All Courses
@@ -208,60 +208,6 @@ export default function Dashboard({
                 </div>
             </div>
             <hr />
-
-
-            {/* <h2 id="wd-dashboard-all-courses">All Courses ({courses.length})</h2> <hr />
-            <div id="wd-dashboard-courses" className="row">
-                <div className="row row-cols-1 row-cols-md-5 g-4">
-                    {courses.map((course) => {
-                        return (
-                            <div className="wd-dashboard-course col" style={{ width: "300px" }}>
-                                <div className="card rounded-3 overflow-hidden">
-                                    <img src={course.image} height={160} alt={`${course.name} course`} />
-                                    <div className="card-body">
-                                        <span className="wd-dashboard-course-link"
-                                            style={{ textDecoration: "none", color: "navy", fontWeight: "bold" }} >
-                                            {course.name}
-                                        </span>
-                                        <p className="card-text" style={{ maxHeight: 53, overflow: "hidden" }}>
-                                            {course.description}
-                                        </p>
-                                        <button
-                                            onClick={() => enrollInCourse(course._id)}
-                                            className="btn btn-success float-end"
-                                        >
-                                            Enroll
-                                        </button>
-
-                                        <Link to={`/Kanbas/Courses/${course._id}/Home`} className="btn btn-primary">
-                                                Go
-                                            </Link>
-
-                                            <button onClick={(event) => {
-                                                event.preventDefault();
-                                                deleteCourse(course._id);
-                                            }} className="btn btn-danger float-end"
-                                                id="wd-delete-course-click">
-                                                Delete
-                                            </button>
-
-                                            <button onClick={(event) => {
-                                                event.preventDefault();
-                                                setCourse(course);
-                                            }}
-                                                className="btn btn-warning me-2 float-end"
-                                                id="wd-edit-course-click" >
-                                                Edit
-                                            </button> 
-
-
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div> */}
         </div>
     );
 }
