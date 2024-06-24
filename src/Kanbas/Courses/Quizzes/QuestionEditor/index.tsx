@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
@@ -8,9 +8,11 @@ import { MdEdit } from "react-icons/md";
 import * as client from './client';
 import { setQuestion, addQuestion, deleteQuestion, editQuestion } from './reducer';
 import "./style.css";
+import EditorNavigation from '../QuizEntry/EditorNavigation';
 
 export default function Quzzies() {
     const navigate = useNavigate();
+    const { pathname } = useLocation();
     const { cid, qid } = useParams();
     const dispatch = useDispatch();
     const questions = useSelector((state: any) => state.questionReducer ? state.questionReducer.questions : []);
@@ -44,7 +46,19 @@ export default function Quzzies() {
     };
 
     return (
+
         <div id="wd-question-editor" className="p-4">
+          <div id="wd-quiz-editor" className="p-4">
+            <div className="d-flex justify-content-end">
+                <div className="text-nowrap">
+                    <div id="quiz-points" className="float-end py-2" >
+                        Points xxx
+                    </div>
+                </div>
+            </div>
+
+            <EditorNavigation pathname={pathname} />
+          </div>
           <div>
             {questions.length === 0 ? (
               <p>No questions available.</p>
@@ -71,7 +85,7 @@ export default function Quzzies() {
           </div>
           <div className="d-flex justify-content-center mb-4">
             <button id="question-button" className="btn btn btn-light border mt-4 mb-2"
-              onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/edit/NewQuestion`)}>
+              onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/edit`)}>
               New Question
             </button>
           </div>
@@ -82,9 +96,11 @@ export default function Quzzies() {
                 Cancel
               </button>
             </Link>
+            <Link to={`/Kanbas/Courses/${cid}/Quizzes`}>
             <button type="submit" className="btn btn-danger">
               Save
             </button>
+           </Link>
           </div>
         </div>
       );

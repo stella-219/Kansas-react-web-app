@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import MultipleChoiceEditor from './MultipleChoiceEditor';
-import TrueFalseEditor from './TrueFalseEditor';
+import TrueFalseEditor from "./TrueFalseEditor";
 import FillInBlanksEditor from './FillInBlanksEditor';
 import { addQuestion, editQuestion, setQuestion } from './reducer';
 import * as client from './client';
@@ -67,7 +67,7 @@ const Edit = () => {
             }
             const fetchedQuestions = await client.fetchQuizQuestions(qid);
             dispatch(setQuestion(fetchedQuestions));
-            navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/edit`);
+            navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuestionList`);
         } catch (error) {
             console.error("Error saving question:", error);
             alert("There was an error saving the question. Please try again.");
@@ -76,7 +76,7 @@ const Edit = () => {
     
 
     const handleQuestionCancel = () => {
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/edit`);
+        navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuestionList`);
     };
 
     return (

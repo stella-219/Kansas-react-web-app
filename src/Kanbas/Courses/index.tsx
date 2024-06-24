@@ -6,10 +6,13 @@ import AssignmentEditor from "./Assignments/Editor";
 import Grades from "./Grades";
 import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa6";
-import Quizzes from "./Quizzes";
-import Edit from "./Quizzes/Edit";
+import QuestionIndex from "./Quizzes/QuestionEditor";
+import Edit from "./Quizzes/QuestionEditor/Edit";
 import PeopleTable from "./People/Table";
-
+import Quizzes from "./Quizzes/QuizEntry";
+import Detail from "./Quizzes/QuizEntry/Detail";
+import EditorDetail from "./Quizzes/QuizEntry/EditorDetail";
+import EditorQuestions from "./Quizzes/QuizEntry/EditorQuestions";
 
 export default function Courses({ courses }: { courses: any[] }) {
   const { cid } = useParams();
@@ -34,10 +37,16 @@ export default function Courses({ courses }: { courses: any[] }) {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:id" element={<AssignmentEditor />} />
             <Route path="Grades" element={<Grades />} />
-            <Route path="Quizzes/:qid/edit" element={<Quizzes />} />
-            <Route path="Quizzes/:qid/edit/:questionId" element={<Edit />} />
+            <Route path="Quizzes/:qid/QuestionList" element={<QuestionIndex />} />
+            <Route path="Quizzes/:qid/edit" element={<Edit />} />
             <Route path="People" element={<PeopleTable />} />
             <Route path="People/:uid" element={<PeopleTable />} />
+            <Route path="Quizzes" element={<Quizzes />} />
+            <Route path="Quizzes/newquestions" element={<EditorQuestions />} />
+              <Route path="Quizzes/:qid/editquestions" element={<EditorQuestions />} />
+              <Route path="Quizzes/newdetail" element={<EditorDetail />} />
+              <Route path="Quizzes/:qid/editdetail" element={<EditorDetail />} />
+              <Route path="Quizzes/:qid" element={<Detail />} />
             </Routes>
         </div>
       </div>
