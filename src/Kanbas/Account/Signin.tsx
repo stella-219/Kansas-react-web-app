@@ -22,28 +22,29 @@ export default function Signin() {
       <h1>Sign in</h1>
       {error && <div className="alert alert-danger">{error}</div>}
       <input
+        style={{width:"300px"}}
         onChange={(e) =>
           setCredentials({ ...credentials, username: e.target.value })
         }
         value={credentials.username}
-        className="form-control mb-2"
+        className="form-control mb-2 ms-2"
         placeholder="username"
       />
       <input
+        style={{width:"300px"}}
         onChange={(e) =>
           setCredentials({ ...credentials, password: e.target.value })
         }
         value={credentials.password}
-        className="form-control mb-2"
+        className="form-control mb-2 ms-2"
         placeholder="password"
         type="password"
       />
-      <button onClick={signin} className="btn btn-primary w-100">
+      <button style={{ width: "300px" }} onClick={signin} className="btn btn-primary">
         {" "}
         Sign in{" "}
       </button>
       <br />
-      <Link to="/Kanbas/Account/signup">Sign up</Link>
     </div>
   );
 }

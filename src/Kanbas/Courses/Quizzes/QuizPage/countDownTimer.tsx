@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface CountdownTimerProps {
     initialMinutes: number;
@@ -7,11 +7,10 @@ interface CountdownTimerProps {
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({ initialMinutes, initialSeconds }) => {
     const [time, setTime] = useState({ minutes: initialMinutes, seconds: initialSeconds });
+    const initialTimeRef = useRef({ minutes: initialMinutes, seconds: initialSeconds });
 
     useEffect(() => {
-        // Reset the timer to the initial values whenever they change
-        setTime({ minutes: initialMinutes, seconds: initialSeconds });
-
+        // Ensure timer is only initialized once
         const timer = setInterval(() => {
             setTime(prevTime => {
                 const { minutes, seconds } = prevTime;
@@ -27,7 +26,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ initialMinutes, initial
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [initialMinutes, initialSeconds]); // Add initialMinutes and initialSeconds to the dependency array
+    }, []); // Empty dependency array to ensure this effect runs only once
 
     return (
         <div>

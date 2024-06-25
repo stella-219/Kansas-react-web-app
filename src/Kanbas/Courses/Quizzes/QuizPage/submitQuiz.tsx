@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 // Define types
 type Answer = {
     questionId: string;
-    answer: string | { [key: string]: string };
+    answer: string | { [key: string]: string }; // Allow undefined values
     pointsEarned?: number; // New field to store points earned for each question
 };
 
@@ -19,6 +19,7 @@ type QuizRecord = {
     timeTaken: string;
     score: number;
     pointsForQuiz: number;
+    keptScore?: number;
     answers: Answer[];
 };
 
@@ -87,6 +88,7 @@ export const submitQuiz = async (
         submittedAt,
         timeTaken: `${Math.floor(timeTakenSeconds / 60)} minutes ${Math.floor(timeTakenSeconds % 60)} seconds`,
         score,
+        keptScore: score, //initialize keptScore with score
         pointsForQuiz,
         answers
     };
@@ -95,6 +97,7 @@ export const submitQuiz = async (
         const existingRecord = await findRecordByUserByQuiz(currentUser._id, quizID);
         if (existingRecord) {
             // Update the existing record
+            const updatedKeptScore = Math.max(existingRecord.keptScore, score);
             const updatedRecord = {
                 ...existingRecord,
                 attempt: existingRecord.attempt + 1,
@@ -102,6 +105,7 @@ export const submitQuiz = async (
                 submittedAt,
                 timeTaken: newQuizHistory.timeTaken,
                 score,
+                keptScore: updatedKeptScore, 
                 pointsForQuiz,
                 answers
             };
