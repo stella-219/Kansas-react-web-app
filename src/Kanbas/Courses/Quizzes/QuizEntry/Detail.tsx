@@ -37,20 +37,23 @@ export default function Detail() {
         }
     };
 
-    // Fetch user role
-    const [userRole, setUserRole] = useState<string>("");
-    const fetchUserRole = async () => {
-        try {
-            const currentUser = await acountClient.profile();
-            setUserRole(currentUser.role);
-        } catch (error) {
-            console.error("Error fetching user role:", error);
-        }
-    };
+
+    const userRole = currentUser?.role || "";
+
+    // // Fetch user role
+    // const [userRole, setUserRole] = useState<string>("");
+    // const fetchUserRole = async () => {
+    //     try {
+    //         const currentUser = await acountClient.profile();
+    //         setUserRole(currentUser.role);
+    //     } catch (error) {
+    //         console.error("Error fetching user role:", error);
+    //     }
+    // };
 
     useEffect(() => {
         fetchQuizDetails();
-        fetchUserRole();
+        // fetchUserRole();
     }, []);
 
     // find from redux

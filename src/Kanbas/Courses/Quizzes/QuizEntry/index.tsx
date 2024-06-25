@@ -29,7 +29,7 @@ export default function Quizzes() {
     };
     useEffect(() => {
         fetchQuizzes();
-        fetchUserRole();
+        // fetchUserRole();
     }, []);
 
     // format some key details
@@ -61,16 +61,20 @@ export default function Quizzes() {
         )
     }
 
-    // Fetch user role
-    const [userRole, setUserRole] = useState<string>("");
-    const fetchUserRole = async () => {
-        try {
-            const currentUser = await acountClient.profile();
-            setUserRole(currentUser.role);
-        } catch (error) {
-            console.error("Error fetching user role:", error);
-        }
-    };
+    const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
+    const userRole = currentUser?.role || "";
+
+
+    // // Fetch user role
+    // const [userRole, setUserRole] = useState<string>("");
+    // const fetchUserRole = async () => {
+    //     try {
+    //         const currentUser = await acountClient.profile();
+    //         setUserRole(currentUser.role);
+    //     } catch (error) {
+    //         console.error("Error fetching user role:", error);
+    //     }
+    // };
 
     // handle click
     const handleEditClick = (quiz: any) => {
