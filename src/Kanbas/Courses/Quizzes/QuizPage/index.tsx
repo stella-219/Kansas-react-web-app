@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BsQuestionCircle, BsFillPlayFill } from 'react-icons/bs';
 import { BiErrorCircle } from 'react-icons/bi';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, Link } from 'react-router-dom';
 import { GrEdit } from "react-icons/gr";
 import { LiaHandPointRightSolid } from 'react-icons/lia';
 import { useSelector } from 'react-redux';
@@ -91,6 +91,9 @@ export default function QuizPage() {
             ...selectedAnswers,
             [questionId]: answer
         });
+    };
+    const handleFetchPerQuestion = (questionId: string) => {
+        navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizID}/edit/${questionId}`);
     };
 
     const handleSubmitQuiz = async () => {
@@ -254,8 +257,15 @@ export default function QuizPage() {
                                 <ul className="list-group mb-3">
                                     {quizQuestions.map((question: any, index: any) => (
                                         <li key={question._id} className="list-group-item d-flex align-items-center">
-                                            <BsQuestionCircle className="me-2" />
-                                            <a href={`#question${index}`} className="text-danger">{question.title}</a>
+                                        <BsQuestionCircle className="me-2" />
+                                        <button
+                                            className="btn btn-link p-0 text-danger"
+                                            onClick={() => handleFetchPerQuestion(question._id)}
+                                        >
+                                            {question.title}
+                                        </button>
+                                            {/* <a href={`#question${index}`} className="text-danger">{question.title}</a> */}
+                                    
                                         </li>
                                     ))}
                                 </ul>

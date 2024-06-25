@@ -49,14 +49,7 @@ export default function Quzzies() {
 
         <div id="wd-question-editor" className="p-4">
           <div id="wd-quiz-editor" className="p-4">
-            <div className="d-flex justify-content-end">
-                <div className="text-nowrap">
-                    <div id="quiz-points" className="float-end py-2" >
-                        Points xxx
-                    </div>
-                </div>
-            </div>
-
+            
             <EditorNavigation pathname={pathname} />
           </div>
           <div>

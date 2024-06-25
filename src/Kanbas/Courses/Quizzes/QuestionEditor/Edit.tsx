@@ -9,12 +9,12 @@ import * as client from './client';
 import { IoIosArrowDown } from "react-icons/io";
 
 const Edit = () => {
-    const { cid, qid, questionId } = useParams();
+    const { cid, qid, questionId, quizID } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const questions = useSelector((state: any) => state.questionReducer ? state.questionReducer.questions : []);
     const [currQuestion, setCurrQuestion] = useState<any>({
-        quizID: qid || "",
+        quizID: qid || quizID || "",
         title: "",
         type: "Multiple Choice", 
         question: "",
@@ -25,15 +25,17 @@ const Edit = () => {
     const [choices, setChoices] = useState<string[]>(['', '', '', '']);
     const [selectedChoiceIndex, setSelectedChoiceIndex] = useState<number | null>(null);
 
+
     useEffect(() => {
-        if (questionId) {
-            const question = questions.find((q: any) => q._id === questionId);
-            if (question) {
-                setCurrQuestion(question);
-                setChoices(question.choices || ['', '', '', '']);
+     if (questionId) {
+           const question = questions.find((q: any) => q._id === questionId);
+          if (question) {
+              setCurrQuestion(question);
+             setChoices(question.choices || ['', '', '', '']);
             }
         }
-    }, [questionId, questions]);
+ }, [questionId, questions]);
+
 
     const handleChoicesChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const newChoices = [...choices];
