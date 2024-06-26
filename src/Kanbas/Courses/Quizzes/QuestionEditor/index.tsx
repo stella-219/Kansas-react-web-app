@@ -16,6 +16,7 @@ export default function Quzzies() {
     const { cid, qid } = useParams();
     const dispatch = useDispatch();
     const questions = useSelector((state: any) => state.questionReducer ? state.questionReducer.questions : []);
+    console.log("questions",questions)
 
     useEffect(() => {
         const fetchData = async () => {

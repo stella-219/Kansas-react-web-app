@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { setQuizDetails } from './reducer';
 import * as acountClient from "../../../Account/client";
 import { findRecordByUserByQuiz } from "../QuizPage/client";
+import { Alert } from "react-bootstrap";
 
 interface Quiz {
     _id: string;
@@ -77,9 +78,14 @@ export default function Detail() {
         try {
             const recordData = await findRecordByUserByQuiz(currentUser._id, quiz._id);
             console.log("recordData",recordData);
-            if (recordData && recordData.attempt >= quiz.how_many_attempts) {
+            console.log("quiz allowed attempt",quiz.how_many_attempts);
+            console.log("record attempt",recordData.attempt)
+            if (recordData && recordData.attempt > quiz.how_many_attempts) {
+                alert("You have reached the maximum quiz attempt. You will be directed to quiz answer page");
                 setAlertQuizID(quiz._id);
-                setShowAlert(true);
+               // setShowAlert(true);
+               navigate(`/Courses/${cid}/Quizzes/${qid}/Answers/${currentUser._id}`);
+                
             } else {
                 navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/takequiz`);
             }
@@ -236,12 +242,12 @@ export default function Detail() {
 
                     <div className="d-flex justify-content-center mt-5 mb-5">
                         {/* <Link id="quiz-edit" to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/editdetail`}> */}
-                        <Link id="quiz-preview" to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/takequiz`}>
+                        {/* <Link id="quiz-preview" to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/takequiz`}> */}
                             <button id="edit-button" className="btn btn-lg btn-danger border me-1 mt-3"
                                 onClick={() => checkUserAttempt(currQuiz)}>
                                 Take the Quiz
                             </button>
-                        </Link>
+                        {/* </Link> */}
                         {/* </Link> */}
 
                     </div>
@@ -267,7 +273,7 @@ export default function Detail() {
                     </table>
 
                 </div>)}
-                {showAlert && (
+                {/* {showAlert && (
                 <div className="modal fade show" style={{ display: 'block' }}>
                     <div className="modal-dialog">
                         <div className="modal-content">
@@ -285,6 +291,7 @@ export default function Detail() {
                                     type="button"
                                     className="btn btn-primary"
                                     onClick={() => {
+                                        console.log("within the showalert");
                                         setShowAlert(false);
                                         navigate(`/Kanbas/Courses/${cid}/Quizzes/${alertQuizID}/Answers/${currentUser._id}`);
                                     }}
@@ -295,7 +302,7 @@ export default function Detail() {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
         </div>
     )
 }

@@ -80,7 +80,6 @@ const QuizAnswer: React.FC = () => {
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th scope="col"></th>
                                     <th scope="col">Attempt</th>
                                     <th scope="col">Time</th>
                                     <th scope="col">Score</th>
@@ -89,7 +88,6 @@ const QuizAnswer: React.FC = () => {
                             <tbody>
                                 <tr>
                                     <td>LATEST</td>
-                                    <td>Attempt 1</td>
                                     <td>{timeTaken}</td>
                                     <td>{studentScore} out of {totalPoints}</td>
                                 </tr>

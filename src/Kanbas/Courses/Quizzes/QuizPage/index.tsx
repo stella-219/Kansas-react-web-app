@@ -311,9 +311,9 @@ export default function QuizPage() {
                                 <div className="row">
                                     <div className="col-12 d-flex align-items-center">
                                         <h6 className="mb-0 me-2">Time Running:</h6>
-                                        <button className="btn btn-secondary btn-sm" onClick={() => setShowTimer(!showTimer)}>
+                                        {/* <button className="btn btn-secondary btn-sm" onClick={() => setShowTimer(!showTimer)}>
                                             {showTimer ? 'Hide Time' : 'Show Time'}
-                                        </button>
+                                        </button> */}
                                     </div>
                                     <div className="col-12">
                                         <span>Attempt due: {dueTime.toLocaleString('en-US', {

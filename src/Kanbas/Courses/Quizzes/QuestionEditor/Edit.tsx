@@ -7,6 +7,7 @@ import FillInBlanksEditor from './FillInBlanksEditor';
 import { addQuestion, editQuestion, setQuestion } from './reducer';
 import * as client from './client';
 import { IoIosArrowDown } from "react-icons/io";
+import { editQuiz } from "../QuizEntry/reducer";
 
 const Edit = () => {
     const { cid, qid, questionId } = useParams();
@@ -106,7 +107,7 @@ const Edit = () => {
                     </select>
                     <IoIosArrowDown
                      className="position-absolute"
-                    style={{ top: "13%", right: "390px", transform: "translateY(60%)" }}
+                    style={{ top: "12%", right: "300px", transform: "translateY(60%)" }}
                     />
                 </div>
                 <div className="flex-fill text-right ms-4">

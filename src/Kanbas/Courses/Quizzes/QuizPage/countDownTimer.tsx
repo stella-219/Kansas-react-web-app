@@ -10,7 +10,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ initialMinutes, initial
     const initialTimeRef = useRef({ minutes: initialMinutes, seconds: initialSeconds });
 
     useEffect(() => {
-        // Ensure timer is only initialized once
+        setTime({ minutes: initialMinutes, seconds: initialSeconds });
         const timer = setInterval(() => {
             setTime(prevTime => {
                 const { minutes, seconds } = prevTime;
@@ -26,7 +26,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ initialMinutes, initial
         }, 1000);
 
         return () => clearInterval(timer);
-    }, []); // Empty dependency array to ensure this effect runs only once
+    }, [initialMinutes, initialSeconds]);
 
     return (
         <div>

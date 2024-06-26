@@ -21,6 +21,9 @@ export default function Quizzes() {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const { quizzes } = useSelector((state: any) => state.quizzesReducer);
+    // new added part 
+    const questions = useSelector((state: any) => state.questionReducer ? state.questionReducer.questions : []);
+    console.log("questions", questions);
 
     // Retrieving Quizzes for Course
     const fetchQuizzes = async () => {
@@ -97,6 +100,11 @@ export default function Quizzes() {
         }
     };
 
+    //new added part 
+    const getQuestionCount = (quizId: string) => {
+        return questions.filter((question: any) => question.quizID === quizId).length;
+    };
+
 
     return (
         <div id="quizzes-container">
@@ -154,8 +162,11 @@ export default function Quizzes() {
                                                     </Link>
                                                     <br />
                                                     <span id="quiz-details">
-                                                        {renderQuizDetails(quiz)} | <b> Due </b> {formattedDateTime(new Date(quiz.due_date))} | {quiz.points} pts | {quiz.questions ? quiz.questions.length : 0} Questions
+                                                        {/* {renderQuizDetails(quiz)} | <b> Due </b> {formattedDateTime(new Date(quiz.due_date))} | {quiz.points} pts | {quiz.questions ? quiz.questions.length : 0} Questions */}
+                                                        {renderQuizDetails(quiz)} | <b> Due </b> {formattedDateTime(new Date(quiz.due_date))} | {quiz.points? quiz.points: 0 } pts |  {getQuestionCount(quiz._id)} Questions
+                                                       
                                                     </span>
+                                                
                                                 </div>
 
                                                 <div className="d-flex align-self-center" >
@@ -256,7 +267,7 @@ export default function Quizzes() {
 
                                                     <br />
                                                     <span id="quiz-details">
-                                                        {renderQuizDetails(quiz)} | <b> Due </b> {formattedDateTime(new Date(quiz.due_date))} | {quiz.points} pts | {quiz.questions ? quiz.questions.length : 0} Questions
+                                                        {renderQuizDetails(quiz)} | <b> Due </b> {formattedDateTime(new Date(quiz.due_date))} | {quiz.points? quiz.points: 0 } pts | {getQuestionCount(quiz._id)} Questions
                                                     </span>
                                                 </div>
 
