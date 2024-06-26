@@ -44,6 +44,7 @@ const QuizAnswer: React.FC = () => {
     const studentScore = record.score;
     const timeTaken = record.timeTaken;
     const submittedAt = record.submittedAt;
+    const keptScore = record.keptScore;
 
     // Extract the correct answer value for a given question
     const getCorrectAnswer = (question: any): string => {
@@ -72,9 +73,6 @@ const QuizAnswer: React.FC = () => {
                         </div>
                     </div>
                     <hr />
-                    <div className="mt-5">
-                        <span>This quiz has been locked {formatDate(quiz?.until_date)}.</span>
-                    </div>
                     <div className="mt-5">
                         <h4>Attempt History</h4>
                         <table className="table">
@@ -113,7 +111,7 @@ const QuizAnswer: React.FC = () => {
                                         <span>{questionScore} / {question.points} pts</span>
                                     </div>
                                     <div className="card-body">
-                                        <p>{question.question}</p>
+                                        <p dangerouslySetInnerHTML={{ __html: question.question }}></p>
                                         <div className="ms-3">
                                             {question.type === 'Multiple Choice' && question.choices && question.choices.map((option: any, idx: any) => (
                                                 <div key={idx} className="form-check d-flex align-items-center">
@@ -208,8 +206,8 @@ const QuizAnswer: React.FC = () => {
                         <h4>Submission Details:</h4>
                         <hr />
                         <p><strong>Time:</strong> {timeTaken}</p>
-                        <p><strong>Current Score: </strong> {studentScore} out of {totalPoints}</p>
-                        <p><strong>Kept Score:</strong> {studentScore} out of {totalPoints}</p>
+                        <p><strong>Current Score: </strong> {studentScore} out of {totalPoints}</p>  
+                        <p><strong>Kept Score:</strong> {keptScore} out of {totalPoints}</p>
                     </div>
                 </div>
             </div>

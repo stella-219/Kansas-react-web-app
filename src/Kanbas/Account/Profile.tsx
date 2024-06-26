@@ -52,6 +52,7 @@ export default function Profile() {
                                 id="wd-user-username"
                                 value={currentUser.username}
                                 className="form-control mb-2"
+                                style={{ width: "300px" }}
                                 onChange={(e) => handleInputChange("username", e.target.value)} />
                         </div>
                     </div>
@@ -65,6 +66,7 @@ export default function Profile() {
                                 id="wd-user-password"
                                 value={currentUser.password}
                                 className="form-control mb-2"
+                                style={{ width: "300px" }}
                                 onChange={(e) => handleInputChange("password", e.target.value)} />
                         </div>
                     </div>
@@ -78,6 +80,7 @@ export default function Profile() {
                                 id="wd-user-firstName"
                                 value={currentUser.firstName}
                                 className="form-control mb-2"
+                                style={{ width: "300px" }}
                                 onChange={(e) => handleInputChange("firstName", e.target.value)} />
                         </div>
                     </div>
@@ -90,6 +93,7 @@ export default function Profile() {
                             <input
                                 id="wd-user-lastName"
                                 value={currentUser.lastName}
+                                style={{ width: "300px" }}
                                 className="form-control mb-2"
                                 onChange={(e) => handleInputChange("lastName", e.target.value)} />
                         </div>
@@ -104,6 +108,7 @@ export default function Profile() {
                                 id="wd-user-dob"
                                 type="date"
                                 value={currentUser.dob}
+                                style={{ width: "300px" }}
                                 className="form-control mb-2"
                                 onChange={(e) => handleInputChange("dob", e.target.value)} />
                         </div>
@@ -117,6 +122,7 @@ export default function Profile() {
                             <input
                                 id="wd-user-email"
                                 value={currentUser.email}
+                                style={{ width: "300px" }}
                                 className="form-control mb-2"
                                 onChange={(e) => handleInputChange("email", e.target.value)} />
                         </div>
@@ -130,6 +136,7 @@ export default function Profile() {
                             <select
                                 id="wd-user-role"
                                 value={currentUser.role}
+                                style={{ width: "300px" }}
                                 onChange={(e) => handleInputChange("role", e.target.value)}
                                 className="form-control mb-2">
                                 {/* <option value="USER">User</option> */}
@@ -141,18 +148,13 @@ export default function Profile() {
                 </div>
             )}
 
-            <div className="form-group row mb-3 justify-content-end">
-                <div className="col-sm-6 position-relative">
-                    <button onClick={updateUserInfo} className="btn btn-success w-100 mb-3">
-                        Update user information
-                    </button>
-                </div>
-
-                <div className="col-sm-6 position-relative">
-                    <button onClick={signout} className="btn btn-danger w-100">
-                        Sign out
-                    </button>
-                </div>
+            <div className="d-flex flex-column align-items-start">
+                <button onClick={updateUserInfo} className="btn btn-success mb-3" style={{ width: "300px" }}>
+                    Update user information
+                </button>
+                <button onClick={signout} className="btn btn-danger" style={{ width: "300px" }}>
+                    Sign out
+                </button>
             </div>
 
             {showModal && (

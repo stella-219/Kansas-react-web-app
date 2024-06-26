@@ -80,11 +80,11 @@ export default function Detail() {
             console.log("recordData",recordData);
             console.log("quiz allowed attempt",quiz.how_many_attempts);
             console.log("record attempt",recordData.attempt)
-            if (recordData && recordData.attempt > quiz.how_many_attempts) {
+            if (recordData && recordData.attempt >= quiz.how_many_attempts) {
                 alert("You have reached the maximum quiz attempt. You will be directed to quiz answer page");
                 setAlertQuizID(quiz._id);
                // setShowAlert(true);
-               navigate(`/Courses/${cid}/Quizzes/${qid}/Answers/${currentUser._id}`);
+               //navigate(`/Courses/${cid}/Quizzes/${qid}/Answers/${currentUser._id}`);
                 
             } else {
                 navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/takequiz`);

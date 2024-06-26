@@ -13,6 +13,7 @@ import { Button, Modal } from "react-bootstrap";
 import * as client from "./client";
 import * as acountClient from "../../../Account/client";
 import { TbForbid } from "react-icons/tb";
+import { findRecordByUserByQuiz } from "../QuizPage/client";
 
 export default function Quizzes() {
     const { pathname } = useLocation();
@@ -21,6 +22,9 @@ export default function Quizzes() {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const { quizzes } = useSelector((state: any) => state.quizzesReducer);
+    const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
+    const userRole = currentUser?.role || "";
+    const [keptScores, setKeptScores] = useState<{ [key: string]: number }>({});
     // new added part 
     const questions = useSelector((state: any) => state.questionReducer ? state.questionReducer.questions : []);
     console.log("questions", questions);
@@ -29,7 +33,27 @@ export default function Quizzes() {
     const fetchQuizzes = async () => {
         const Quizzes = await client.findQuizzesForCourse(cid as string);
         dispatch(setQuizzes(Quizzes));
+        if (userRole === "STUDENT" && currentUser) {
+            const scores = await fetchKeptScores(quizzes, currentUser._id);
+            setKeptScores(scores);
+        }
     };
+
+    const fetchKeptScores = async (quizzes: any[], userId: string) => {
+        const scores: { [key: string]: number } = {};
+        for (const quiz of quizzes) {
+            try {
+                const record = await findRecordByUserByQuiz(userId, quiz._id);
+                if (record && record.keptScore !== undefined) {
+                    scores[quiz._id] = record.keptScore;
+                }
+            } catch (error) {
+                console.error(`Error fetching kept score for quiz ${quiz._id}:`, error);
+            }
+        }
+        return scores;
+    }
+
     useEffect(() => {
         fetchQuizzes();
         // fetchUserRole();
@@ -64,8 +88,7 @@ export default function Quizzes() {
         )
     }
 
-    const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
-    const userRole = currentUser?.role || "";
+
 
 
     // // Fetch user role
@@ -267,7 +290,10 @@ export default function Quizzes() {
 
                                                     <br />
                                                     <span id="quiz-details">
-                                                        {renderQuizDetails(quiz)} | <b> Due </b> {formattedDateTime(new Date(quiz.due_date))} | {quiz.points? quiz.points: 0 } pts | {getQuestionCount(quiz._id)} Questions
+                                                        {renderQuizDetails(quiz)} | <b> Due </b> {formattedDateTime(new Date(quiz.due_date))} | {quiz.points ? quiz.points : 0} pts | {getQuestionCount(quiz._id)} Questions
+                                                        {userRole === "STUDENT" && keptScores[quiz._id] !== undefined && (
+                                                            <> | <b>Kept Score</b> {keptScores[quiz._id]}</>
+                                                        )}
                                                     </span>
                                                 </div>
 

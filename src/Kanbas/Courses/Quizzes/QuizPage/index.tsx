@@ -177,7 +177,8 @@ export default function QuizPage() {
                                     <span>{currentQuestion.points} pts</span>
                                 </div>
                                 <div className="card-body">
-                                    <p>{currentQuestion.question}</p>
+                                    
+                                    <p dangerouslySetInnerHTML={{ __html: currentQuestion.question }}></p>
                                     {currentQuestion.type === 'Multiple Choice' && currentQuestion.choices && (
                                         <div>
                                             {currentQuestion.choices.map((option: string, idx: number) => (
