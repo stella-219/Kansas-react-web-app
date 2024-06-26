@@ -268,7 +268,7 @@ export default function QuizPage() {
                             Submit Quiz
                         </button>
                     </div>
-                    {currentUser.role === 'FACULTY' && (
+                    {/* {currentUser.role === 'FACULTY' && (
                         <>
                             <div className="border p-1 d-flex align-items-center mb-3 mt-5" style={{ backgroundColor: '#f0f0f0', color: 'black' }}>
                                 <GrEdit className="ms-2 me-3" /> Keep Editing This Quiz
@@ -289,7 +289,7 @@ export default function QuizPage() {
                                 </ul>
                             </div>
                         </>
-                    )}
+                    )} */}
                 </div>
                 <div className="col-md-3 mt-2">
                     {currentUser.role === 'STUDENT' && (

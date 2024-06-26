@@ -84,7 +84,7 @@ export default function Detail() {
                 alert("You have reached the maximum quiz attempt. You will be directed to quiz answer page");
                 setAlertQuizID(quiz._id);
                // setShowAlert(true);
-               //navigate(`/Courses/${cid}/Quizzes/${qid}/Answers/${currentUser._id}`);
+               navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/Answers/${currentUser._id}`);
                 
             } else {
                 navigate(`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/takequiz`);
