@@ -28,6 +28,10 @@ const calculateScoreForQuestion = (question: any, userAnswer: any): number => {
     const correctAnswer = question.answers;
     let pointsEarned = 0;
 
+    console.log('Calculating score for question:', question);
+    console.log('User answer:', userAnswer);
+    console.log('Correct answer:', correctAnswer);
+
     if (question.type === 'Fill in the Blanks') {
         // Calculate points for each blank, handle undefined cases
         if (correctAnswer && userAnswer) {
@@ -37,13 +41,16 @@ const calculateScoreForQuestion = (question: any, userAnswer: any): number => {
         }
     } else if (question.type === 'Multiple Choice' || question.type === 'True/False') {
         // Compare directly for Multiple Choice and True/False
-        if (correctAnswer && correctAnswer[0] !== undefined) {
-            pointsEarned = userAnswer === correctAnswer[0] ? question.points : 0;
+        const correctAnswerValue = Object.values(correctAnswer)[0];
+        if (correctAnswerValue !== undefined) {
+            pointsEarned = userAnswer === correctAnswerValue ? question.points : 0;
         }
     }
 
+    console.log('Points earned:', pointsEarned);
     return pointsEarned;
 };
+
 
 // Function to calculate the total points for all questions in the quiz
 const calculatePointsForQuiz = (quizQuestions: any[]): number => {

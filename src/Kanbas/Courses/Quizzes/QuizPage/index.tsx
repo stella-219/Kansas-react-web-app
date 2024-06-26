@@ -40,13 +40,14 @@ export default function QuizPage() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswers>({});
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [startedAt, setStartedAt] = useState<string>(new Date().toISOString());
     const [showTimer, setShowTimer] = useState(true);
     const [previousRecord, setPreviousRecord] = useState<any>(null);
     const currentQuestion = quizQuestions[currentQuestionIndex] as any;
 
     const query = useQuery();
-    const startedAt: string = query.get('startedAt') || new Date().toISOString();
-    const startedTime = startedAt ? new Date(startedAt) : new Date();
+    const queryStartedAt: string = query.get('startedAt') || startedAt;
+    const startedTime = queryStartedAt ? new Date(queryStartedAt) : new Date();
     const timeLimit = quiz && quiz.time_limit === "Yes" ? parseInt(quiz.how_long ?? "0") : 0;
     const dueTime = new Date(startedTime.getTime() + timeLimit * 60000);
     const initialMinutes = timeLimit;
@@ -68,6 +69,10 @@ export default function QuizPage() {
             }
         };
         fetchData();
+        // Set the initial startedAt time if not already set
+        if (!query.get('startedAt')) {
+            setStartedAt(new Date().toISOString());
+        }
     }, [cid, quizID]);
 
     const handleNext = () => {
@@ -92,9 +97,11 @@ export default function QuizPage() {
             [questionId]: answer
         });
     };
-    const handleFetchPerQuestion = (questionId: string) => {
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizID}/edit/${questionId}`);
-    };
+
+    // const handleFetchPerQuestion = (questionId: string) => {
+    //     navigate(`/Kanbas/Courses/${cid}/Quizzes/${quizID}/edit/${questionId}`);
+    //     console.log("questionId", questionId);  //DEBUG
+    // };
 
     const handleSubmitQuiz = async () => {
         console.log(currentUser);
@@ -111,6 +118,40 @@ export default function QuizPage() {
             return answer ? answer.answer : null;
         }
         return null;
+    };
+
+    const renderPreviousAnswer = (questionId: string) => {
+        const previousAnswer = getPreviousAnswer(questionId);
+        if (!previousAnswer) return null;
+
+        const question = quizQuestions.find(q => q._id === questionId);
+        if (!question) return null;
+
+        if (question.type === 'Fill in the Blanks') {
+            return (
+                <div className="mt-3">
+                    <strong>Your previous answer:</strong>
+                    {Object.keys(question.answers).map((key, idx) => (
+                        <div key={idx} className="mb-3 d-flex align-items-center">
+                            <label className="form-label me-2">{key}.</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled
+                                style={{ maxWidth: '300px' }}
+                                value={(previousAnswer as { [key: string]: string })?.[key] || ''}
+                            />
+                        </div>
+                    ))}
+                </div>
+            );
+        } else {
+            return (
+                <div className="mt-3">
+                    <strong>Your previous answer:</strong> {previousAnswer}
+                </div>
+            );
+        }
     };
 
     return (
@@ -154,6 +195,7 @@ export default function QuizPage() {
                                                     </label>
                                                 </div>
                                             ))}
+                                            {renderPreviousAnswer(currentQuestion._id)}
                                         </div>
                                     )}
                                     {currentQuestion.type === 'True/False' && (
@@ -173,6 +215,7 @@ export default function QuizPage() {
                                                     </label>
                                                 </div>
                                             ))}
+                                            {renderPreviousAnswer(currentQuestion._id)}
                                         </div>
                                     )}
                                     {currentQuestion.type === 'Fill in the Blanks' && (
@@ -192,37 +235,14 @@ export default function QuizPage() {
                                                     />
                                                 </div>
                                             ))}
+                                            {renderPreviousAnswer(currentQuestion._id)}
                                         </div>
                                     )}
-                                    <div className="mt-3">
-                                       
-                                        <div>
-                                            {currentQuestion.type === 'Multiple Choice' && getPreviousAnswer(currentQuestion._id)}
-                                            {currentQuestion.type === 'True/False' && getPreviousAnswer(currentQuestion._id)}
-                                            {currentQuestion.type === 'Fill in the Blanks' && (
-                                                <div>
-                                                    {Object.keys(currentQuestion.answers).map((key, idx) => (
-                                                        <div key={idx} className="mb-3 d-flex align-items-center">
-                                                            <strong>Your previous answer:</strong>
-                                                            <label className="form-label me-2">{key}.</label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                disabled
-                                                                style={{ maxWidth: '300px' }}
-                                                                value={(getPreviousAnswer(currentQuestion._id) as { [key: string]: string })?.[key] || ''}
-                                                            />
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     )}
-                    <div className="mt-3 mb-3 d-flex justify-content-between " style={{ minWidth: '450px' }}>
+                    <div className="mt-3 mb-3 d-flex justify-content-between" style={{ minWidth: '450px' }}>
                         <button
                             onClick={handlePrevious}
                             className="btn btn-secondary rounded-0"
@@ -257,15 +277,12 @@ export default function QuizPage() {
                                 <ul className="list-group mb-3">
                                     {quizQuestions.map((question: any, index: any) => (
                                         <li key={question._id} className="list-group-item d-flex align-items-center">
-                                        <BsQuestionCircle className="me-2" />
-                                        <button
-                                            className="btn btn-link p-0 text-danger"
-                                            onClick={() => handleFetchPerQuestion(question._id)}
-                                        >
-                                            {question.title}
-                                        </button>
-                                            {/* <a href={`#question${index}`} className="text-danger">{question.title}</a> */}
-                                    
+                                            <BsQuestionCircle className="me-2" />
+                                            <button
+                                                className="btn btn-link p-0 text-danger"
+                                            >
+                                                {question.title}
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>

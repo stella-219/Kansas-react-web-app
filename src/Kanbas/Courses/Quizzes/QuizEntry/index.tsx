@@ -27,6 +27,7 @@ interface Quiz {
     time_limit?: string;
     how_long?: string;
     multiple_attempts?: string;
+    how_many_attempts?: string;
     show_correct_answers?: string;
     access_code?: string;
     one_question_at_a_time?: string;
@@ -37,6 +38,7 @@ interface Quiz {
     until_date?: string;
     questions: any[];
     course?: string;
+    published?: string;
 }
 
 const calculatePointsForQuiz = (quizQuestions: any[]): number => {
@@ -61,19 +63,23 @@ export default function Quizzes() {
     const [showModal, setShowModal] = useState(false);
     const [lastAttemptScores, setLastAttemptScores] = useState<{ [key: string]: number | null }>({});
 
-    // Fetch user role
-    const [userRole, setUserRole] = useState<string>("");
-    const fetchUserRole = async () => {
-        try {
-            const currentUser = await accountClient.profile();
-            setUserRole(currentUser.role);
-            if (currentUser.role === "STUDENT") {
-                fetchLastAttemptScores(currentUser._id);
-            }
-        } catch (error) {
-            console.error("Error fetching user role:", error);
-        }
-    };
+    // // Fetch user role
+    // const [userRole, setUserRole] = useState<string>("");
+    // const fetchUserRole = async () => {
+    //     try {
+    //         const currentUser = await accountClient.profile();
+    //         setUserRole(currentUser.role);
+    //         if (currentUser.role === "STUDENT") {
+    //             fetchLastAttemptScores(currentUser._id);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching user role:", error);
+    //     }
+    // };
+
+    const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
+    const userRole = currentUser?.role || "";
+
 
     // Fetch last attempt scores for quizzes
     const fetchLastAttemptScores = async (userId: string) => {
@@ -97,7 +103,7 @@ export default function Quizzes() {
 
     useEffect(() => {
         fetchQuizzes();
-        fetchUserRole();
+        // fetchUserRole();
     }, []);
 
     // format some key details
@@ -147,12 +153,21 @@ export default function Quizzes() {
         setShowModal(false);
     };
 
+    //     const handlePublishClick = async (quiz: any) => {
+//         try {
+//             const updatedQuiz = { ...quiz, published: quiz.published === "Published" ? "Unpublished" : "Published" };
+//             await client.updateQuiz(updatedQuiz);
+//             dispatch(editQuiz(updatedQuiz));
+//         } catch (error) {
+//             console.error("Error publishing/unpublishing quiz:", error);
+//         }
+//     };
 
     const handlePublishClick = async (quiz: Quiz) => {
         try {
             const questions = await findQuestionsByQuiz(quiz._id);
             const points = calculatePointsForQuiz(questions);
-            const updatedQuiz = { ...quiz, points };
+            const updatedQuiz = { ...quiz, points, published: quiz.published === "Published" ? "Unpublished" : "Published" };
             dispatch(editQuiz(updatedQuiz));
         } catch (error) {
             console.error("Error publishing/unpublishing quiz:", error);

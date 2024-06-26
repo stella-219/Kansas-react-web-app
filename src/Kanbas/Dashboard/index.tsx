@@ -124,7 +124,7 @@ export default function Dashboard({
                                                         <button onClick={async (event) => {
                                                             event.preventDefault();
                                                             await deleteCourse(course._id);
-                                                            // await fetchPublishedCourses();
+                                                            await fetchPublishedCourses();
                                                         }} className="btn btn-danger float-end"
                                                             id="wd-delete-course-click">
                                                             Delete
@@ -200,9 +200,10 @@ export default function Dashboard({
                                                     Go
                                                 </a>
                                                 <button
-                                                    onClick={(e) => {
+                                                    onClick={async(e) => {
                                                         e.preventDefault();
-                                                        unenrollFromCourse(course._id);
+                                                        await unenrollFromCourse(course._id);
+                                                        await fetchEnrolledCourses(); 
                                                     }}
                                                     className="btn btn-danger float-end"
                                                 >

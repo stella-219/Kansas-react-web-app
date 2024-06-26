@@ -5,15 +5,6 @@ import { FaTimesCircle, FaCheckCircle } from 'react-icons/fa';
 
 const formatDate = (date: string) => new Date(date).toLocaleString();
 
-const formatTimeDifference = (start: string, end: string) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const diffMs = endDate.getTime() - startDate.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffSecs = Math.floor((diffMs % 60000) / 1000);
-    return `${diffMins} minutes ${diffSecs} seconds`;
-};
-
 const QuizAnswer: React.FC = () => {
     const { cid, quizID, uid } = useParams<{ cid: string; quizID: string; uid: string }>();
     const [quiz, setQuiz] = useState<any>(null);
@@ -21,7 +12,6 @@ const QuizAnswer: React.FC = () => {
     const [record, setRecord] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [formattedTimeTaken, setFormattedTimeTaken] = useState<string>("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,13 +22,10 @@ const QuizAnswer: React.FC = () => {
                     findQuestionsByQuiz(quizID as string),
                     findRecordByUserByQuiz(uid as string, quizID as string)
                 ]);
-                console.log(recordData); //DEBUGGING
+                console.log(recordData);    //DEBUGGING
                 setQuiz(quizData);
                 setQuestions(questionsData);
                 setRecord(recordData);
-                if (recordData.startedAt && recordData.submittedAt) {
-                    setFormattedTimeTaken(formatTimeDifference(recordData.startedAt, recordData.submittedAt));
-                }
                 setLoading(false);
             } catch (err) {
                 setError('Failed to fetch data');
@@ -55,9 +42,13 @@ const QuizAnswer: React.FC = () => {
 
     const totalPoints = questions.reduce((acc, question) => acc + question.points, 0);
     const studentScore = record.score;
-    const keptScore = record.keptScore; // Display keptScore
+    const timeTaken = record.timeTaken;
     const submittedAt = record.submittedAt;
-    const quizLocked = new Date() > new Date(quiz?.until_date);
+
+    // Extract the correct answer value for a given question
+    const getCorrectAnswer = (question: any): string => {
+        return Object.values(question.answers)[0] as string;
+    };
 
     return (
         <div className="container mt-4">
@@ -81,16 +72,15 @@ const QuizAnswer: React.FC = () => {
                         </div>
                     </div>
                     <hr />
-                    {quizLocked && (
-                        <div className="mt-5">
-                            <span>This quiz has been locked {formatDate(quiz?.until_date)}.</span>
-                        </div>
-                    )}
+                    <div className="mt-5">
+                        <span>This quiz has been locked {formatDate(quiz?.until_date)}.</span>
+                    </div>
                     <div className="mt-5">
                         <h4>Attempt History</h4>
                         <table className="table">
                             <thead>
                                 <tr>
+                                    <th scope="col"></th>
                                     <th scope="col">Attempt</th>
                                     <th scope="col">Time</th>
                                     <th scope="col">Score</th>
@@ -99,7 +89,8 @@ const QuizAnswer: React.FC = () => {
                             <tbody>
                                 <tr>
                                     <td>LATEST</td>
-                                    <td>{formattedTimeTaken}</td>
+                                    <td>Attempt 1</td>
+                                    <td>{timeTaken}</td>
                                     <td>{studentScore} out of {totalPoints}</td>
                                 </tr>
                             </tbody>
@@ -107,16 +98,14 @@ const QuizAnswer: React.FC = () => {
                         <div className="ms-3">
                             <p>Score for this quiz: {studentScore} out of {totalPoints} <br />
                                 Submitted {formatDate(submittedAt)}<br />
-                                This attempt took {formattedTimeTaken}.
-                            </p >
-                            <p>
-                                <strong>Kept Score:</strong> {keptScore} out of {totalPoints}
-                            </p >
+                                This attempt took {timeTaken}.
+                            </p>
                         </div>
                     </div>
                     {questions.map((question, index) => {
                         const userAnswer = record.answers.find((ans: any) => ans.questionId === question._id);
                         const questionScore = userAnswer ? userAnswer.pointsEarned : 0;
+                        const correctAnswer = getCorrectAnswer(question);
 
                         return (
                             <div key={index} className="position-relative mt-4">
@@ -126,14 +115,14 @@ const QuizAnswer: React.FC = () => {
                                         <span>{questionScore} / {question.points} pts</span>
                                     </div>
                                     <div className="card-body">
-                                        <p>{question.question}</p >
+                                        <p>{question.question}</p>
                                         <div className="ms-3">
                                             {question.type === 'Multiple Choice' && question.choices && question.choices.map((option: any, idx: any) => (
                                                 <div key={idx} className="form-check d-flex align-items-center">
                                                     <div className="d-flex align-items-center" style={{ position: 'relative' }}>
                                                         {userAnswer && userAnswer.answer === option && (
                                                             <>
-                                                                {userAnswer.answer === question.answers[0] ? (
+                                                                {userAnswer.answer === correctAnswer ? (
                                                                     <FaCheckCircle className="text-success me-2" style={{ position: 'absolute', left: '-24px' }} />
                                                                 ) : (
                                                                     <FaTimesCircle className="text-danger me-2" style={{ position: 'absolute', left: '-24px' }} />
@@ -152,7 +141,7 @@ const QuizAnswer: React.FC = () => {
                                                     <div className="d-flex align-items-center" style={{ position: 'relative' }}>
                                                         {userAnswer && userAnswer.answer === option && (
                                                             <>
-                                                                {userAnswer.answer === question.answers[0] ? (
+                                                                {userAnswer.answer === correctAnswer ? (
                                                                     <FaCheckCircle className="text-success me-2" style={{ position: 'absolute', left: '-24px' }} />
                                                                 ) : (
                                                                     <FaTimesCircle className="text-danger me-2" style={{ position: 'absolute', left: '-24px' }} />
@@ -197,13 +186,13 @@ const QuizAnswer: React.FC = () => {
                                                     )}
                                                 </div>
                                             )}
-                                            {userAnswer && userAnswer.answer !== question.answers[0] && question.type !== 'Fill in the Blanks' && (
+                                            {userAnswer && userAnswer.answer !== correctAnswer && question.type !== 'Fill in the Blanks' && (
                                                 <div className="mt-2">
                                                     <strong>Correct Answer:</strong>
                                                     <div className="form-check d-flex align-items-center">
                                                         <input className="form-check-input ms-2 me-2" type="radio" name={`question-${question._id}`} disabled />
                                                         <label className="form-check-label">
-                                                            {question.answers[0]}
+                                                            {correctAnswer}
                                                         </label>
                                                     </div>
                                                 </div>
@@ -220,9 +209,9 @@ const QuizAnswer: React.FC = () => {
                     <div className="d-none d-md-block float-end">
                         <h4>Submission Details:</h4>
                         <hr />
-                        <p><strong>Time:</strong> {formattedTimeTaken}</p >
-                        <p><strong>Current Score: </strong> {studentScore} out of {totalPoints}</p >
-                        <p><strong>Kept Score:</strong> {keptScore} out of {totalPoints}</p >
+                        <p><strong>Time:</strong> {timeTaken}</p>
+                        <p><strong>Current Score: </strong> {studentScore} out of {totalPoints}</p>
+                        <p><strong>Kept Score:</strong> {studentScore} out of {totalPoints}</p>
                     </div>
                 </div>
             </div>

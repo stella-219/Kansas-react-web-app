@@ -9,14 +9,14 @@ import * as client from './client';
 import { IoIosArrowDown } from "react-icons/io";
 
 const Edit = () => {
-    const { cid, qid, questionId, quizID } = useParams();
+    const { cid, qid, questionId } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const questions = useSelector((state: any) => state.questionReducer ? state.questionReducer.questions : []);
     const [currQuestion, setCurrQuestion] = useState<any>({
-        quizID: qid || quizID || "",
+        quizID: qid || "",
         title: "",
-        type: "Multiple Choice",
+        type: "Multiple Choice", 
         question: "",
         choices: [],
         answers: {},
@@ -25,29 +25,15 @@ const Edit = () => {
     const [choices, setChoices] = useState<string[]>(['', '', '', '']);
     const [selectedChoiceIndex, setSelectedChoiceIndex] = useState<number | null>(null);
 
-    // useEffect(() => {
-    //     const fetchQuestionDetails = async () => {
-    //         console.log("Fetching details for questionId:", questionId);
-    //         console.log("Questions in store:", questions);
-    //         if (questionId) {
-    //             let question = questions.find((q: any) => q._id === questionId);
-    //             console.log("Found question in store:", question);
-    //             if (!question) {
-    //                 try {
-    //                     question = await client.findQuestionById(questionId);
-    //                     console.log("Fetched question from server:", question);
-    //                     dispatch(editQuestion(question)); // Add the question to the store
-    //                 } catch (error) {
-    //                     console.error("Error fetching question details:", error);
-    //                     return;
-    //                 }
-    //             }
-    //             setCurrQuestion(question);
-    //             setChoices(question.choices || ['', '', '', '']);
-    //         }
-    //     };
-    //     fetchQuestionDetails();
-    // }, [questionId, qid, quizID, questions, dispatch]);
+    useEffect(() => {
+        if (questionId) {
+            const question = questions.find((q: any) => q._id === questionId);
+            if (question) {
+                setCurrQuestion(question);
+                setChoices(question.choices || ['', '', '', '']);
+            }
+        }
+    }, [questionId, questions]);
 
     const handleChoicesChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const newChoices = [...choices];
@@ -87,6 +73,7 @@ const Edit = () => {
             alert("There was an error saving the question. Please try again.");
         }
     };
+    
 
     const handleQuestionCancel = () => {
         navigate(`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuestionList`);
@@ -118,8 +105,8 @@ const Edit = () => {
                         <option value="Fill in the Blanks">Fill in the Blanks</option>
                     </select>
                     <IoIosArrowDown
-                        className="position-absolute"
-                        style={{ top: "13%", right: "390px", transform: "translateY(60%)" }}
+                     className="position-absolute"
+                    style={{ top: "13%", right: "390px", transform: "translateY(60%)" }}
                     />
                 </div>
                 <div className="flex-fill text-right ms-4">

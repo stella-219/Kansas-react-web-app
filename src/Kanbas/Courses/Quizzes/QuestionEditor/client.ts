@@ -1,6 +1,5 @@
 import axios from "axios";
 const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
-const QUESTIONS_API = `${REMOTE_SERVER}/api/questions`;
 export const fetchQuizQuestions = async (qid: any) => {
   try {
     const response = await axios.get(
@@ -51,8 +50,3 @@ export const deleteQuizQuestionsByQuestionID = async (questionID: any) => {
 }
 
 };
-
-export const findQuestionById = async (questionId: string) => {
-  const response = await axios.get(`${QUESTIONS_API}/${questionId}`);
-  return response.data;
-}

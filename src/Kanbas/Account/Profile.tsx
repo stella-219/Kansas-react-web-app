@@ -132,7 +132,7 @@ export default function Profile() {
                                 value={currentUser.role}
                                 onChange={(e) => handleInputChange("role", e.target.value)}
                                 className="form-control mb-2">
-                                <option value="USER">User</option>
+                                {/* <option value="USER">User</option> */}
                                 <option value="FACULTY">Faculty</option>
                                 <option value="STUDENT">Student</option>
                             </select>
